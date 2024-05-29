@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/main/Home";
 import Login from "./pages/auth/Login";
-// import ErrPage from "./components/ErrPage";
+import ErrPage from "./components/ErrPage";
 import './App.css'
 
 function App() {
@@ -14,7 +15,15 @@ function App() {
   }, [])
 
   return (
-    !token ? <Login /> : <Home />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="*" element={<ErrPage />}
+        />
+      </Routes>
+    </BrowserRouter>
+    // !token ? <Login /> : <Home />
   );
 }
 
