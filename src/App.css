@@ -1,6 +1,9 @@
 .primary-color {
   color: rgb(2, 0, 36);
 }
+.white-color {
+  color: #fff;
+}
 
 body {
   background: rgb(2, 0, 36);
@@ -188,14 +191,17 @@ span {
 }
 
 .long-cards {
-  width: 100%;
+  width: 250px;
   height: 250px;
   background-color: #fff;
   border-radius: 25px;
   cursor: pointer;
   display: flex;
-  align-items: center;
+  flex-direction: column !important;
   justify-content: space-around;
+  background-color: rgb(2, 0, 36);
+  padding: 20px;
+  margin: 10px;
 }
 
 .home-logo {

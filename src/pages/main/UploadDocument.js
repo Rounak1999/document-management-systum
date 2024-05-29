@@ -12,6 +12,19 @@ import logo from '../../assets/home_upoad.svg';
 import * as ApiService from '../../apis'
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import { Box, OutlinedInput } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 const minor_personal = [
     'John', 'Tom', 'Emily'
@@ -20,7 +33,17 @@ const minor_professional = [
     'Accounts', 'HR', 'IT', 'Finance'
 ]
 
+function getStyles(name, chips, theme) {
+    return {
+        fontWeight:
+            chips.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
+
 export default function UploadDocument() {
+    const theme = useTheme();
     const [date, setDate] = useState("");
     const [major, setMajor] = useState("");
     const [minor, setMinor] = useState("");
@@ -50,8 +73,6 @@ export default function UploadDocument() {
             let response = await ApiService.documentTags(data);
             if (response.status === true) {
                 setTags(response.data)
-                let data = response.data.map((e) => { return e.label })
-                setChips(data)
             } else {
             }
         } catch (e) {
@@ -95,20 +116,27 @@ export default function UploadDocument() {
         }
     }
 
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setChips(typeof value === 'string' ? value.split(',') : value);
     };
 
-    const handleInputKeyDown = (e) => {
-        if (e.key === 'Enter' && inputValue.trim() !== '') {
-            setChips([inputValue.trim(), ...chips]);
-            setInputValue('');
-        }
-    };
+    // const handleInputChange = (e) => {
+    //     setInputValue(e.target.value);
+    // };
 
-    const handleChipDelete = (chipIndex) => {
-        setChips(chips.filter((_, index) => index !== chipIndex));
-    };
+    // const handleInputKeyDown = (e) => {
+    //     if (e.key === 'Enter' && inputValue.trim() !== '') {
+    //         setChips([inputValue.trim(), ...chips]);
+    //         setInputValue('');
+    //     }
+    // };
+
+    // const handleChipDelete = (chipIndex) => {
+    //     setChips(chips.filter((_, index) => index !== chipIndex));
+    // };
 
     return (
         <Grid container style={{ height: "100vh" }}>
@@ -185,8 +213,38 @@ export default function UploadDocument() {
                             }
                         </Select>
                     </FormControl>
-
-                    <FormControl className='input-styles'>
+                    <FormControl className='input-styles' style={{ width: "90%" }}>
+                        <Typography className='input-label'>
+                            Select Tags
+                        </Typography>
+                        <Select
+                            multiple
+                            value={chips}
+                            size="small"
+                            onChange={handleChange}
+                            input={<OutlinedInput />}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                </Box>
+                            )}
+                            MenuProps={MenuProps}
+                        >
+                            {tags.map((name) => (
+                                <MenuItem
+                                    key={name.id}
+                                    value={name.label}
+                                    style={getStyles(name.label, chips, theme)}
+                                >
+                                    {name.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {/* commenting for doubt thuis is inout with create chips on enter */}
+                    {/* <FormControl className='input-styles'>
                         <Typography style={{ color: "rgb(2, 0, 36)", fontSize: "15px" }}>
                             Add Tags
                         </Typography>
@@ -204,7 +262,7 @@ export default function UploadDocument() {
                                 </div>
                             ))}
                         </div>
-                    </FormControl>
+                    </FormControl> */}
 
                     <FormControl className='input-styles'>
                         <Typography className='input-label'>
