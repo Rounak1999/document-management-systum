@@ -296,9 +296,9 @@ export default function SearchDocument() {
             </Grid>
             {
                 // !documents.length ? 
-                documents.map((data) => {
+                documents.map((data, index) => {
                     return (
-                        <Grid xs={12} sm={6} lg={4} xl={3} className='div-center'>
+                        <Grid item xs={12} sm={4} lg={3} xl={3} key={index} className='div-center'>
                             <Grid className='long-cards'>
                                 <Typography className='white-color' style={{ fontSize: "15px" }}>
                                     Uploaded By: {data.uploaded_by}
@@ -309,7 +309,7 @@ export default function SearchDocument() {
                                 <Typography className='white-color' style={{ fontSize: "15px" }}>
                                     Minor: {data.minor_head}
                                 </Typography>
-                                <Typography className='white-color' style={{ fontSize: "15px" }}>
+                                <Typography className='white-color text-overflow' style={{ fontSize: "15px" }}>
                                     Remarks: {data.document_remarks}
                                 </Typography>
 
