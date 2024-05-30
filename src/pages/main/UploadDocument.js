@@ -12,6 +12,21 @@ import logo from '../../assets/home_upoad.svg';
 import * as ApiService from '../../apis'
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import { Box, OutlinedInput } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 const minor_personal = [
     'John', 'Tom', 'Emily'
@@ -20,7 +35,17 @@ const minor_professional = [
     'Accounts', 'HR', 'IT', 'Finance'
 ]
 
+function getStyles(name, chips, theme) {
+    return {
+        fontWeight:
+            chips.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
+
 export default function UploadDocument() {
+    const theme = useTheme();
     const [date, setDate] = useState("");
     const [major, setMajor] = useState("");
     const [minor, setMinor] = useState("");
@@ -50,8 +75,6 @@ export default function UploadDocument() {
             let response = await ApiService.documentTags(data);
             if (response.status === true) {
                 setTags(response.data)
-                let data = response.data.map((e) => { return e.label })
-                setChips(data)
             } else {
             }
         } catch (e) {
@@ -95,35 +118,37 @@ export default function UploadDocument() {
         }
     }
 
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setChips(typeof value === 'string' ? value.split(',') : value);
     };
 
-    const handleInputKeyDown = (e) => {
-        if (e.key === 'Enter' && inputValue.trim() !== '') {
-            setChips([inputValue.trim(), ...chips]);
-            setInputValue('');
-        }
-    };
+    // const handleInputChange = (e) => {
+    //     setInputValue(e.target.value);
+    // };
 
-    const handleChipDelete = (chipIndex) => {
-        setChips(chips.filter((_, index) => index !== chipIndex));
-    };
+    // const handleInputKeyDown = (e) => {
+    //     if (e.key === 'Enter' && inputValue.trim() !== '') {
+    //         setChips([inputValue.trim(), ...chips]);
+    //         setInputValue('');
+    //     }
+    // };
+
+    // const handleChipDelete = (chipIndex) => {
+    //     setChips(chips.filter((_, index) => index !== chipIndex));
+    // };
 
     return (
-        <Grid container style={{ height: "100vh" }}>
+        <Grid container style={{ height: "100vh", position: "relative" }}>
             <Grid item xs={0} sm={6} lg={4} xl={4} className='div-center left-side' style={{ background: "#fff", flexDirection: "column" }}>
                 <img src={logo} style={{ width: "250px", height: "250px" }} />
                 <Typography variant='h6' style={{ color: "rgb(2, 0, 36)" }}>
                     Upload Document
                 </Typography>
             </Grid>
-            <Grid item xs={12} sm={6} lg={8} xl={8} style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "0px 30px"
-            }}>
+            <Grid item xs={12} sm={6} lg={8} xl={8} className='form-container'>
                 <form onSubmit={(e) => { handleSubmit(e) }} className='main-form'>
                     <FormControl className='input-styles'>
                         <Typography className='input-label'>
@@ -185,8 +210,38 @@ export default function UploadDocument() {
                             }
                         </Select>
                     </FormControl>
-
-                    <FormControl className='input-styles'>
+                    <FormControl className='input-styles' style={{ width: "90%" }}>
+                        <Typography className='input-label'>
+                            Select Tags
+                        </Typography>
+                        <Select
+                            multiple
+                            value={chips}
+                            size="small"
+                            onChange={handleChange}
+                            input={<OutlinedInput />}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                </Box>
+                            )}
+                            MenuProps={MenuProps}
+                        >
+                            {tags.map((name) => (
+                                <MenuItem
+                                    key={name.id}
+                                    value={name.label}
+                                    style={getStyles(name.label, chips, theme)}
+                                >
+                                    {name.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {/* commenting for doubt thuis is inout with create chips on enter */}
+                    {/* <FormControl className='input-styles'>
                         <Typography style={{ color: "rgb(2, 0, 36)", fontSize: "15px" }}>
                             Add Tags
                         </Typography>
@@ -204,7 +259,7 @@ export default function UploadDocument() {
                                 </div>
                             ))}
                         </div>
-                    </FormControl>
+                    </FormControl> */}
 
                     <FormControl className='input-styles'>
                         <Typography className='input-label'>
@@ -217,9 +272,13 @@ export default function UploadDocument() {
                             onChange={(e) => setRemarks(e.target.value)}
                         />
                     </FormControl>
-
-                    <Grid item xs={12} className='button-container'>
-                        <Button variant="contained" style={{ color: "#fff", background: "rgb(2, 0, 36)" }} onClick={(e) => { handleSubmit(e) }}>Submit</Button>
+                    <Grid container>
+                        <Grid item xs={6} className='button-container'>
+                            <Button variant="contained" style={{ color: "#fff", background: "rgb(2, 0, 36)" }} onClick={(e) => { handleSubmit(e) }}>Submit</Button>
+                        </Grid>
+                        <Grid item xs={6} className='button-container back-butt' style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Button variant="contained" style={{ color: "#fff", background: "rgb(2, 0, 36)" }} onClick={(e) => { navigate('/home') }}>Back</Button>
+                        </Grid>
                     </Grid>
                 </form>
             </Grid>
