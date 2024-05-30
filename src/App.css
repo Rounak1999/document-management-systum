@@ -1,6 +1,7 @@
 .primary-color {
   color: rgb(2, 0, 36);
 }
+
 .white-color {
   color: #fff;
 }
@@ -11,14 +12,25 @@ body {
   overflow-x: hidden;
 }
 
+.w-100 {
+  width: 100%;
+}
+
 .button-common {
-  color:#fff;
+  color: #fff;
   background-color: rgb(2, 0, 36) !important;
 }
 
 .input-label {
   color: rgb(2, 0, 36);
   font-size: 15px
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 30px
 }
 
 .main-form {
@@ -84,35 +96,11 @@ span {
   display: flex;
 }
 
-@media screen and (max-width: 600px) {
-
-  .left-side {
-    display: none !important;
-  }
-
-  .main-container {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  .inner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column !important;
-    padding: 30px 15px;
-    border-radius: 15px;
-    border: 2px solid #FFFFFF;
-    background-color: #ffffff;
-    width: 300px;
-  }
+.back-ico {
+  display: flex;
 }
 
-
-
-/*  */
+/* asi */
 .App {
   display: flex;
   flex-direction: column;
@@ -212,4 +200,61 @@ span {
 .main-logo {
   width: 150px;
   height: 150px;
+}
+
+@media screen and (max-width: 600px) {
+
+  .left-side {
+    display: none !important;
+  }
+
+  .main-container {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .inner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column !important;
+    padding: 30px 15px;
+    border-radius: 15px;
+    border: 2px solid #FFFFFF;
+    background-color: #ffffff;
+    width: 300px;
+  }
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .main-form {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px;
+    padding: 20px 0px;
+    width: 100% !important;
+  }
+
+  .back-ico {
+    display: none !important;
+  }
+
+  .card {
+    width: 200px !important;
+    height: 200px !important;
+    background-color: #fff;
+    border-radius: 25px;
+    flex-direction: column;
+    cursor: pointer;
+  }
 }

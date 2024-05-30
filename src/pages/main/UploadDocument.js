@@ -14,6 +14,8 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { Box, OutlinedInput } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -139,19 +141,14 @@ export default function UploadDocument() {
     // };
 
     return (
-        <Grid container style={{ height: "100vh" }}>
+        <Grid container style={{ height: "100vh", position: "relative" }}>
             <Grid item xs={0} sm={6} lg={4} xl={4} className='div-center left-side' style={{ background: "#fff", flexDirection: "column" }}>
                 <img src={logo} style={{ width: "250px", height: "250px" }} />
                 <Typography variant='h6' style={{ color: "rgb(2, 0, 36)" }}>
                     Upload Document
                 </Typography>
             </Grid>
-            <Grid item xs={12} sm={6} lg={8} xl={8} style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "0px 30px"
-            }}>
+            <Grid item xs={12} sm={6} lg={8} xl={8} className='form-container'>
                 <form onSubmit={(e) => { handleSubmit(e) }} className='main-form'>
                     <FormControl className='input-styles'>
                         <Typography className='input-label'>
@@ -275,9 +272,13 @@ export default function UploadDocument() {
                             onChange={(e) => setRemarks(e.target.value)}
                         />
                     </FormControl>
-
-                    <Grid item xs={12} className='button-container'>
-                        <Button variant="contained" style={{ color: "#fff", background: "rgb(2, 0, 36)" }} onClick={(e) => { handleSubmit(e) }}>Submit</Button>
+                    <Grid container>
+                        <Grid item xs={6} className='button-container'>
+                            <Button variant="contained" style={{ color: "#fff", background: "rgb(2, 0, 36)" }} onClick={(e) => { handleSubmit(e) }}>Submit</Button>
+                        </Grid>
+                        <Grid item xs={6} className='button-container back-butt' style={{ display: "flex", justifyContent: "flex-end" }}>
+                            <Button variant="contained" style={{ color: "#fff", background: "rgb(2, 0, 36)" }} onClick={(e) => { navigate('/home') }}>Back</Button>
+                        </Grid>
                     </Grid>
                 </form>
             </Grid>

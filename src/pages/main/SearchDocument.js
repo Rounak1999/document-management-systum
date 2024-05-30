@@ -12,7 +12,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { useTheme } from '@mui/material/styles';
+import HomeIcon from '@mui/icons-material/Home';
 import JSZip from "jszip";
+import axios from 'axios';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -25,10 +27,10 @@ const MenuProps = {
     },
 };
 
-const minor_personal = [
+const minor_personal = [    //dummy data for major
     'John', 'Tom', 'Emily'
 ]
-const minor_professional = [
+const minor_professional = [   // dummy data for minor
     'Accounts', 'HR', 'IT', 'Finance'
 ]
 
@@ -51,19 +53,19 @@ export default function SearchDocument() {
     const [minor, setMinor] = useState("");
     const [previewImage, setPreviewImage] = useState("");
     const [tags, setTags] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [images, setImages] = useState([])
 
     let navigate = useNavigate();
-    const zip = new JSZip();
 
     useEffect((e) => {
         let token = localStorage.getItem("token");
         if (token === "" || token === undefined || token === null) {
             navigate('/');
         }
-        getDocumentEntry("", "", "", "", []);
-        documentTags();
+        getDocumentEntry("", "", "", "", []);  // for fetching all data
+        documentTags(); // for fetching all tags
     }, [])
 
     const documentTags = async (event) => {
@@ -107,12 +109,18 @@ export default function SearchDocument() {
         try {
             let response = await ApiService.searchDocumentEntry(data);
             if (response.status === true) {
-                console.log('resp-----', response.data);
                 setDocuments(response.data)
+                setLoading(false)
+                let image_data = response.data.length ? response.data.map((e) => {
+                    return e.file_url;
+                }) : []
+                setImages(image_data)
             } else {
+                setLoading(false)
             }
         } catch (e) {
             console.log(e);
+            setLoading(false)
         }
     }
 
@@ -133,35 +141,58 @@ export default function SearchDocument() {
         setOpen(false);
     };
 
-    // async function handleZip() {
-    //     // Add Images to the zip file
-    //     for (var i = 0; i < images.length; i++) {
-    //         const response = await fetch(images[i]);
-    //         const blob = await response.blob();
-    //         console.log(blob);
-    //         zip.file(images[i].split("/").pop(), blob);
 
-    //         if (i == selectedImages.length - 1) {
-    //             // Generate the zip file
-    //             const zipData = await zip.generateAsync({
-    //                 type: "blob",
-    //                 streamFiles: true,
-    //             });
-    //             console.log(zipData);
-    //             // Create a download link for the zip file
-    //             const link = document.createElement("a");
-    //             link.href = window.URL.createObjectURL(zipData);
-    //             link.download = "snapcial-ai.zip";
-    //             link.click();
-    //         }
+    // function for download all images as zip 
+    const handleZip = async () => {
+        const zip = new JSZip();
+        const promises = [];
 
-    //     }
-    // }
+        // Fetch images and add them to the zip file
+        images.forEach((imageUrl, index) => {
+            const fileName = `image${index + 1}.jpg`;
+            const promise = axios.get(imageUrl, { responseType: 'arraybuffer' })
+                .then(response => {
+                    zip.file(fileName, response.data, { binary: true });
+                })
+                .catch(error => {
+                    console.error(`Failed to fetch ${imageUrl}:`, error);
+                });
+            promises.push(promise);
+        });
+
+        // Wait for all image fetch requests to complete
+        await Promise.all(promises);
+
+        // Generate the zip file
+        const content = await zip.generateAsync({ type: 'blob' });
+
+        // Create a temporary download link and trigger download
+        const url = window.URL.createObjectURL(content);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'images.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
 
     return (
         <Grid container style={{ backgroundColor: "#fff", height: "100vh", overflowY: "scroll", overflowX: "hidden" }}>
-            <Grid item xs={12} sm={12} lg={12} xl={12}>
+            <Grid item xs={12} sm={12} lg={12} xl={12} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', backgroundColor: 'rgb(2,0,36)', color: '#fff', position: 'fixed', width: '100%', height: '50px', zIndex: '100' }}>
+                <Grid>
+                    <IconButton onClick={() => { navigate('/home'); }} style={{ color: "#fff" }} aria-label="Back to home">
+                        <HomeIcon />
+                    </IconButton>
+                </Grid>
+                <Grid>Documents</Grid>
+                <Grid onClick={() => { handleZip() }}>
+                    <IconButton style={{ color: "#fff" }} aria-label="download">
+                        <FolderZipIcon />
+                    </IconButton>
+                </Grid>
+            </Grid>
+            <Grid item xs={12} sm={12} lg={12} xl={12} style={{ marginTop: "60px" }}>
                 <Grid container>
                     <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                         <FormControl className='input-styles' style={{ width: "90%" }}>
@@ -264,6 +295,7 @@ export default function SearchDocument() {
                 </Grid>
             </Grid>
             {
+                // !documents.length ? 
                 documents.map((data) => {
                     return (
                         <Grid xs={12} sm={6} lg={4} xl={3} className='div-center'>
@@ -291,7 +323,7 @@ export default function SearchDocument() {
                                         </IconButton>
                                     </Grid>
                                     <Grid item xs={6} className='div-center'>
-                                        <a href={previewImage} target="_blank" className='primary-color' download style={{ textDecoration: 'none' }}>
+                                        <a href={data.file_url} target="_blank" className='primary-color' download style={{ textDecoration: 'none' }}>
                                             <IconButton style={{ color: "#fff" }} aria-label="download">
                                                 <DownloadIcon />
                                             </IconButton>
@@ -302,6 +334,12 @@ export default function SearchDocument() {
                         </Grid>
                     );
                 })
+                // :
+                //     <Grid className='w-100' style={{display:'flex',justifyContent:"center"}}>
+                //         <Typography variant='h5' className='primary-color'>
+                //             No Data Found
+                //         </Typography>
+                //     </Grid>
             }
 
             <Dialog
