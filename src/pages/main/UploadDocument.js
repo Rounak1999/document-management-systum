@@ -110,7 +110,10 @@ export default function UploadDocument() {
                     icon: "success"
                 });
                 navigate('/home')
-            } else {
+            } else if (response.status === false) {
+                Swal.fire({
+                    text: response.message
+                });
             }
         } catch (e) {
             console.log(e);
@@ -140,7 +143,7 @@ export default function UploadDocument() {
     // };
 
     return (
-        <Grid container style={{ height: "100vh"}}>
+        <Grid container style={{ height: "100vh" }}>
             <Grid item xs={0} sm={6} lg={4} xl={4} className='div-center left-side' style={{ background: "#fff", flexDirection: "column" }}>
                 <img src={logo} style={{ width: "250px", height: "250px" }} />
                 <Typography variant='h6' style={{ color: "rgb(2, 0, 36)" }}>
