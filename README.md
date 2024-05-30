@@ -34,7 +34,13 @@ This repo contains a
 
 ## One is for uploading documents (screenshot below) and 
 
+## old one (Doubt)
+
 ![nrml1](https://github.com/Rounak1999/document-management-systum/assets/61222797/f8d730fd-d2f0-45ac-81da-8555f44a5b57)
+
+## new one
+
+![nrml6](https://github.com/Rounak1999/document-management-systum/assets/61222797/6e5973e2-c6f8-4e74-af4d-862c5106b356)
 
 ## second is for searching documents with a single download and downloading all data as a zip file download (screenshot below)
 
